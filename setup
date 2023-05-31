@@ -1,0 +1,83 @@
+#!/bin/bash
+
+# Function declarations
+hdlerror(){
+    echo "Invalid param $1"
+    exit 1
+}
+
+createdir(){
+    mkdir $1
+    echo "Directory '$1' created"
+}
+
+deleteline(){
+    sed -i "$1d" $2
+}
+
+addline(){
+    sed -i "$1a$2" $3
+}
+
+setupfile(){
+    deleteline $1 $4
+    addline $2 $3 $4
+}
+
+admincp(){
+    sudo cp $1 $2
+    echo "File '$1' copied to '$2'"
+}
+
+sctl(){
+    sudo systemctl $1
+    echo "Daemon $2"
+}
+
+sctla(){
+    sudo systemctl $1 $2
+    echo "Daemon $3"
+}
+
+transition(){
+    printf "\n\nEnter to continue"
+    read enter
+}
+
+# Constants
+CWD=`pwd`
+PARAMS=("enable" "start")
+
+# Cleans and builds the app
+printf "=========== Clean/Build  ===========\n\n"
+[ ! -d "./obj" ] && createdir obj
+make dtrack
+transition
+
+# Creates necessary dirs
+printf "\n\n\n=========== Resources creation/setup ===========\n\n"
+[ ! -d "./log" ] && createdir log
+[ ! -d "./backup" ] && createdir backup
+
+# Setup service file
+tf=dtrack.service
+setupfile 5 4 "Environment=\"DTRACK_PATH=$CWD\"" $tf
+setupfile 6 5 "Environment=\"DTRACK_PID=$CWD/dtrack.pid\"" $tf
+echo "File dtrack.service setup"
+
+# Copy executable and service to proper dirs
+admincp dtrack /usr/local/sbin/
+admincp dtrack.service /etc/systemd/system/
+
+# Systemctl stuff
+sctl daemon-reload "reload"
+
+for i in $@
+do
+    [[ " ${PARAMS[*]} " =~ " $i " ]] && sctla $i dtrack $i || hdlerror $i
+done
+
+transition
+printf "\n\n\n=========== Daemon status ===========\n\n"
+systemctl status dtrack.service
+

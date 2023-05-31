@@ -1,0 +1,12 @@
+#!/bin/bash
+
+now=$(date +"%s")
+name="$now-log"
+
+if [ ! -d "./log" ] || [ ! -d "./backup" ]
+then
+    echo "Cannot save, directory 'log' and/or 'backup' doesn't exists"
+    exit 1
+fi
+
+mv log/ backup/$name

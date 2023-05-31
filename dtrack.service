@@ -1,0 +1,12 @@
+[Unit]
+Description=Daemon tracking user activity on the file system
+
+[Service]
+Environment="DTRACK_PATH=xx"
+Environment="DTRACK_PID=xx/dtrack.pid"
+ExecStart=/usr/local/sbin/dtrack
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
+
