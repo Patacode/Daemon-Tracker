@@ -1,6 +1,6 @@
 # Daemons & Systemd
 
-This repo contains the project for the SYSG5's course, around **Daemons & Systemd**.
+This repo contains a project around Daemons & Systemd.
 
 <details>
   <summary>Table of Contents</summary>
@@ -121,5 +121,5 @@ Here is a simple demo showing you how the project work:
 
 This little project has been made by:
 
-* Maximilien Ballesteros (*56080*)
+* Maximilien Ballesteros
 
